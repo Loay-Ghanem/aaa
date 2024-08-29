@@ -9,7 +9,7 @@ def main():
     API_KEY = "AIzaSyCE_TfmldGkMCHvjMHqCNPgS14o6GTjeSo"
     try:
 
-        img = sys.argv[1]
+        #img = sys.argv[1]
 
 
         # Configure the GenAI API with the provided key
@@ -36,30 +36,30 @@ def main():
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
             generation_config=generation_config,
-            system_instruction="Try to analyze plate numbers only. If you can't analyze it, consider it invalid.",
+            system_instruction="Try to analyze plate numbers only or return  not found",
         )
 
         # Upload files to Gemini (update the file paths as needed)
 
         files = [
-            upload_to_gemini(r"C:\xampp\htdocs\aaa\public\storage\temp\1.png", mime_type="image/png"),
+            upload_to_gemini(r"C:\\xampp\\htdocs\\aaa\\public\\storage\\temp\\1.png", mime_type="image/png"),
         ]
 
         # Start a chat session with the model
         chat_session = model.start_chat(
             history=[
-                {
-                    "role": "user",
-                    "parts": [
-                        files[0],
-                    ],
-                },
-                {
-                    "role": "model",
-                    "parts": [
-                        "```json\n{\"plate\": \"invalid\"}\n\n```",
-                    ],
-                },
+                # {
+                #     "role": "user",
+                #     "parts": [
+                #         files[0],
+                #     ],
+                # },
+                # {
+                #     "role": "model",
+                #     "parts": [
+                #         "```json\n{\"plate\": \"invalid\"}\n\n```",
+                #     ],
+                # },
             ]
         )
 
