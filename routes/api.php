@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::post('/call', [ScriptController::class, 'callPythonScript']);
+Route::get('/call', [ScriptController::class, 'callPythonScript']);
 Route::get('/open', [ScriptController::class, 'open']);
 Route::get('/close', [ScriptController::class, 'close']);
 Route::get('/status', [ScriptController::class, 'status']);

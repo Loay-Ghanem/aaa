@@ -15,7 +15,7 @@ def main():
         # Configure the GenAI API with the provided key
         genai.configure(api_key=API_KEY)
 
-        def upload_to_gemini(path, mime_type='image/png'):
+        def upload_to_gemini(path, mime_type='image/jpeg'):
             """Uploads the given file to Gemini.
 
             See https://ai.google.dev/gemini-api/docs/prompting_with_media
@@ -42,24 +42,24 @@ def main():
         # Upload files to Gemini (update the file paths as needed)
 
         files = [
-            upload_to_gemini(r"C:\\xampp\\htdocs\\aaa\\public\\storage\\temp\\1.png", mime_type="image/png"),
+            upload_to_gemini(r"C:\Users\user\Downloads\1.jpg", mime_type="image/jpeg"),
         ]
 
         # Start a chat session with the model
         chat_session = model.start_chat(
             history=[
-                # {
-                #     "role": "user",
-                #     "parts": [
-                #         files[0],
-                #     ],
-                # },
-                # {
-                #     "role": "model",
-                #     "parts": [
-                #         "```json\n{\"plate\": \"invalid\"}\n\n```",
-                #     ],
-                # },
+                {
+                     "role": "user",
+                     "parts": [
+                         files[0],
+                     ],
+                 },
+                 {
+                     "role": "model",
+                     "parts": [
+                         "```json\n{\"plate\": \"invalid\"}\n\n```",
+                     ],
+                 },
             ]
         )
 

@@ -14,17 +14,23 @@ use File;
 class ScriptController extends Controller
 {
     // hi daddy
-    public function callPythonScript(Request $request)
+    public function callPythonScript()
     {
         // ... (rest of your code)
-        $request->validate([
-            "image" => "required",
-        ]);
+        // $request->validate([
+        //     "image" => "required",
+        // ]);
         //$settings = settings::first();
-        $path = 'temp';
-        $imagePath = $request->file('image')->storeAs($path, '1.png', 'public');
-        $imagePath = Storage::url($imagePath);
+        // $path = 'temp';
+        // $imagePath = $request->file('image')->storeAs($path, '1.png', 'public');
 
+
+        if(!File::exists("C:\\Users\\user\\Downloads\\1.jpg"))
+        {
+            $activities=Activity::orderBy('id','desc')->first();
+            $activities->update(['status'=>0]);
+            return;
+        }
         // Define Python path and script path
         // $python_path = 'C:\\Users\\digit\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
         $python_path = 'C:\\Users\\user\\AppData\\Local\\Programs\\Python\\Python312\\python.exe';
@@ -37,13 +43,12 @@ class ScriptController extends Controller
         $command = $python_path . ' ' . $script_path;
         // $settings->counter++;
         // $settings->save();
-        try {
             $output = shell_exec($command);
             $result = json_decode($output, true);
-            File::delete(public_path($imagePath));
-            dd($result);
+
+           File::delete("C:\\Users\\user\\Downloads\\1.jpg");
             if (Employee::where('plate', $this->extract_alphanumeric($result))->where('is_active', true)->exists()) {
-                $activity = Activity::lastest();
+                $activity = Activity::first();
                 $activity->update(['status' => true]);
                 return response()->json([
                     'message' => 'Employee is registered and active in the system ',
@@ -55,10 +60,7 @@ class ScriptController extends Controller
                     'result' => false
                 ], 404);
             }
-        } catch (Exception $e) {
-            // Handle errors appropriately (e.g., log error, return error response)
-            return response()->json(['message' => 'Error executing Python script'], 500);
-        }
+
     }
     function extract_alphanumeric($string)
     {
@@ -69,7 +71,7 @@ class ScriptController extends Controller
         $activities=Activity::orderBy('id','desc')->first();
         // dd($activities->status);
         $activities->update(['status'=>0]);
-        return response()->json([$activities->status],200);
+        return $activities->status;
     }
     public function open(){
         $activities=Activity::orderBy('id','desc')->first();
@@ -79,8 +81,9 @@ class ScriptController extends Controller
     }
     public function status(){
         $activities=Activity::orderBy('id','desc')->first('status');
-        return $activities;
+        return $activities->status;
     }
 
 
 }
+
