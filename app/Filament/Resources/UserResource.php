@@ -3,23 +3,23 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\User;
 use Filament\Tables;
-use App\Models\Employee;
-use App\Models\Empolyee;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Hash;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\EmpolyeeResource\Pages;
+use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\EmpolyeeResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
+use App\Filament\Resources\UserResource\RelationManagers;
 
-class EmpolyeeResource extends Resource
+class UserResource extends Resource
 {
-    protected static ?string $model = Employee::class;
+    protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -27,8 +27,13 @@ class EmpolyeeResource extends Resource
     {
         return $form
             ->schema([
-             TextInput::make('name')->required()->unique(ignoreRecord:true),
-             TextInput::make('plate')->unique(ignoreRecord:true)->required(),
+                TextInput::make('name')->required()->unique(ignoreRecord:true),
+                TextInput::make('email')->unique(ignoreRecord:true)->required(),
+                TextInput::make('password')
+                ->password()
+                ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                ->dehydrated(fn ($state) => filled($state))
+                ->required(fn (string $context): bool => $context==='create')
             ]);
     }
 
@@ -37,21 +42,13 @@ class EmpolyeeResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('plate'),
-                ToggleColumn::make('is_active')
-    ->beforeStateUpdated(function ($record, $state) {
-        // Runs before the state is saved to the database.
-    })
-    ->afterStateUpdated(function ($record, $state) {
-        // Runs after the state is saved to the database.
-    })
+                TextColumn::make('email'),
             ])
             ->filters([
                 //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -70,9 +67,9 @@ class EmpolyeeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListEmpolyees::route('/'),
-            'create' => Pages\CreateEmpolyee::route('/create'),
-            'edit' => Pages\EditEmpolyee::route('/{record}/edit'),
+            'index' => Pages\ListUsers::route('/'),
+            'create' => Pages\CreateUser::route('/create'),
+            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 }
